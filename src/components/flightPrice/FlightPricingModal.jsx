@@ -23,11 +23,20 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
     try {
       const response = await getFlightPricing(flight);
       
-      if (response.data && response.data.flightOffers && response.data.flightOffers.length > 0) {
+      console.log('Received pricing response:', response);
+      
+      // Based on your backend controller, it returns FlightPricingResponse directly
+      // The response should have data.flightOffers array
+      if (response && response.data && response.data.flightOffers && response.data.flightOffers.length > 0) {
         setPricingData(response.data.flightOffers[0]);
         setWarnings(response.warnings || []);
+      } else if (response && response.itineraries) {
+        // If the response is the flight offer directly (fallback)
+        setPricingData(response);
+        setWarnings([]);
       } else {
-        throw new Error('No pricing data received');
+        console.error('Unexpected response structure:', response);
+        throw new Error('No pricing data received from server');
       }
     } catch (error) {
       console.error('Failed to fetch flight pricing:', error);
