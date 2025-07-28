@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plane, Clock, MapPin } from 'lucide-react';
+import { FlightPricingModal } from './flightPrice';
 
 const FlightCard = ({ flight, onSelect }) => {
+  const [showPricingModal, setShowPricingModal] = useState(false);
+
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -47,7 +50,23 @@ const FlightCard = ({ flight, onSelect }) => {
   };
 
   const handleSelect = () => {
-    onSelect(flight);
+    // For transformed data, we need the original flight data for pricing
+    const flightForPricing = flight.originalData || flight;
+    setShowPricingModal(true);
+  };
+
+  const handlePricingConfirm = (pricedFlight) => {
+    console.log('Flight pricing confirmed:', pricedFlight);
+    setShowPricingModal(false);
+    
+    // Call the original onSelect callback with the priced flight data
+    if (onSelect) {
+      onSelect(pricedFlight);
+    }
+  };
+
+  const handlePricingClose = () => {
+    setShowPricingModal(false);
   };
 
   // Check if this is transformed data or original Amadeus data
@@ -112,7 +131,7 @@ const FlightCard = ({ flight, onSelect }) => {
               onClick={handleSelect}
               className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 min-w-[100px]"
             >
-              Select
+              Get Price
             </button>
           </div>
         </div>
@@ -135,6 +154,14 @@ const FlightCard = ({ flight, onSelect }) => {
             </div>
           </div>
         </div>
+
+        {/* Flight Pricing Modal */}
+        <FlightPricingModal
+          flight={flight.originalData || flight}
+          isOpen={showPricingModal}
+          onClose={handlePricingClose}
+          onConfirm={handlePricingConfirm}
+        />
       </div>
     );
   } else {
@@ -208,7 +235,7 @@ const FlightCard = ({ flight, onSelect }) => {
               onClick={handleSelect}
               className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 min-w-[100px]"
             >
-              Select
+              Get Price
             </button>
           </div>
         </div>
@@ -231,6 +258,14 @@ const FlightCard = ({ flight, onSelect }) => {
             </div>
           </div>
         </div>
+
+        {/* Flight Pricing Modal */}
+        <FlightPricingModal
+          flight={flight}
+          isOpen={showPricingModal}
+          onClose={handlePricingClose}
+          onConfirm={handlePricingConfirm}
+        />
       </div>
     );
   }

@@ -23,14 +23,14 @@ function App() {
   // Handle flight selection
   const handleFlightSelect = (flight) => {
     setSelectedFlight(flight)
-    console.log('Flight selected:', flight)
+    console.log('Flight pricing confirmed:', flight)
     
     // Here you would typically:
-    // 1. Call flight offer price API to get updated pricing
-    // 2. Navigate to booking form
-    // 3. Store flight data for booking process
+    // 1. Navigate to booking form with the confirmed pricing
+    // 2. Store flight data for booking process
+    // 3. Proceed to passenger details collection
     
-    alert(`Selected flight! Next step: Get pricing and proceed to booking.`)
+    alert(`Flight pricing confirmed! Total: ${flight.price.currency} ${flight.price.grandTotal}. Next step: Proceed to booking form.`)
   }
 
   // Handle modify search (go back to search form)

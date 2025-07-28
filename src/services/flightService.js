@@ -1,18 +1,59 @@
 // src/services/flightService.js
-const API_BASE_URL = 'http://localhost:7136/api/flights';
+const API_BASE_URL = 'https://localhost:7136/api/FlightSearch';
 
 export const searchFlights = async (searchParams) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/search`, {
-      method: 'POST',
+    // Convert search parameters to URL query parameters
+    const queryParams = new URLSearchParams();
+    
+    // Add all non-null/non-empty parameters
+    if (searchParams.originLocationCode) {
+      queryParams.append('originLocationCode', searchParams.originLocationCode);
+    }
+    if (searchParams.destinationLocationCode) {
+      queryParams.append('destinationLocationCode', searchParams.destinationLocationCode);
+    }
+    if (searchParams.departureDate) {
+      queryParams.append('departureDate', searchParams.departureDate);
+    }
+    if (searchParams.returnDate) {
+      queryParams.append('returnDate', searchParams.returnDate);
+    }
+    if (searchParams.adults) {
+      queryParams.append('adults', searchParams.adults.toString());
+    }
+    if (searchParams.children) {
+      queryParams.append('children', searchParams.children.toString());
+    }
+    if (searchParams.infants) {
+      queryParams.append('infants', searchParams.infants.toString());
+    }
+    if (searchParams.currencyCode) {
+      queryParams.append('currencyCode', searchParams.currencyCode);
+    }
+    if (searchParams.maxResults) {
+      queryParams.append('maxResults', searchParams.maxResults.toString());
+    }
+    if (searchParams.travelClass) {
+      queryParams.append('travelClass', searchParams.travelClass);
+    }
+    if (searchParams.nonStop !== undefined) {
+      queryParams.append('nonStop', searchParams.nonStop.toString());
+    }
+
+    const url = `${API_BASE_URL}?${queryParams.toString()}`;
+    console.log('API Request URL:', url);
+
+    const response = await fetch(url, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
-      body: JSON.stringify(searchParams),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
     return await response.json();
