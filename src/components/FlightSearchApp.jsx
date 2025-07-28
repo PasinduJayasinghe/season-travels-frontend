@@ -9,24 +9,21 @@ const FlightSearchApp = () => {
   const [searchParams, setSearchParams] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [view, setView] = useState('search'); // 'search' or 'results'
+  const [error, setError] = useState(null);
 
-  const handleSearch = async (formData) => {
-    setIsSearching(true);
-    try {
-      const results = await searchFlights(formData);
-      setSearchResults(results);
-      setSearchParams(formData);
-      setView('results');
-    } catch (error) {
-      console.error('Search error:', error);
-      // Handle error (show toast, etc.)
-    } finally {
-      setIsSearching(false);
-    }
+  const handleSearch = async (results, formData) => {
+    // The search is already completed in FlightSearchForm
+    // This is called when results are ready
+    console.log('Search completed in FlightSearchApp:', results, formData);
+    setSearchResults(results);
+    setSearchParams(formData);
+    setView('results');
+    setError(null);
   };
 
   const handleModifySearch = () => {
     setView('search');
+    setError(null);
   };
 
   const handleFlightSelect = (flight) => {
@@ -40,7 +37,6 @@ const FlightSearchApp = () => {
         <FlightSearchForm 
           onSearch={handleSearch} 
           initialData={searchParams}
-          isLoading={isSearching}
         />
       ) : (
         <FlightResults 

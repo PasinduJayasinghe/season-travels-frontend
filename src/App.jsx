@@ -13,7 +13,8 @@ function App() {
 
   // Handle flight search submission
   const handleFlightSearch = async (results, formData) => {
-    setIsLoading(false) // The search is already done in FlightSearchForm
+    console.log('Search completed:', results, formData);
+    setIsLoading(false)
     setSearchData(formData)
     setFlightResults(results)
     setCurrentStep('results')
@@ -25,11 +26,11 @@ function App() {
     console.log('Flight selected:', flight)
     
     // Here you would typically:
-    // 1. Call Amadeus Flight Offer Price API to get updated pricing
+    // 1. Call flight offer price API to get updated pricing
     // 2. Navigate to booking form
     // 3. Store flight data for booking process
     
-    alert(`Selected flight ${flight.itineraries[0].segments[0].carrierCode}${flight.itineraries[0].segments[0].number} for ${flight.price.currency} ${flight.price.total}. Next: Get pricing and proceed to booking.`)
+    alert(`Selected flight! Next step: Get pricing and proceed to booking.`)
   }
 
   // Handle modify search (go back to search form)
@@ -37,7 +38,7 @@ function App() {
     setCurrentStep('search')
     setFlightResults([])
     setSelectedFlight(null)
-    // Optionally keep searchData to pre-populate the form
+    // Keep searchData to pre-populate the form
   }
 
   // Render based on current step

@@ -1,253 +1,44 @@
 import React, { useState } from 'react';
 import { Search, Calendar, Users, Plane } from 'lucide-react';
 import FlightResults from './FlightResults';
-
-// Mock flight data - replace with API call in production
-const mockFlightData = [
-  {
-    id: "1",
-    type: "flight-offer",
-    source: "GDS",
-    instantTicketingRequired: false,
-    oneWay: true,
-    isUpsellOffer: false,
-    numberOfBookableSeats: 5,
-    itineraries: [
-      {
-        duration: "PT12H30M",
-        segments: [
-          {
-            departure: {
-              iataCode: "JFK",
-              terminal: "4",
-              at: "2024-06-15T08:00:00"
-            },
-            arrival: {
-              iataCode: "CMB",
-              terminal: "1",
-              at: "2024-06-16T06:30:00"
-            },
-            carrierCode: "UL",
-            number: "201",
-            aircraft: {
-              code: "A330"
-            },
-            duration: "PT12H30M",
-            numberOfStops: 0
-          }
-        ]
-      }
-    ],
-    price: {
-      currency: "USD",
-      total: "1250.00",
-      base: "1100.00",
-      grandTotal: "1250.00"
-    },
-    validatingAirlineCodes: ["UL"],
-    travelerPricings: [
-      {
-        travelerId: "1",
-        travelerType: "ADULT",
-        price: {
-          currency: "USD",
-          total: "1250.00",
-          base: "1100.00",
-          grandTotal: "1250.00"
-        },
-        fareDetailsBySegment: [
-          {
-            segmentId: "1",
-            cabin: "ECONOMY",
-            class: "Y"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: "2",
-    type: "flight-offer",
-    source: "GDS",
-    instantTicketingRequired: false,
-    oneWay: true,
-    isUpsellOffer: false,
-    numberOfBookableSeats: 3,
-    itineraries: [
-      {
-        duration: "PT15H45M",
-        segments: [
-          {
-            departure: {
-              iataCode: "JFK",
-              terminal: "4",
-              at: "2024-06-15T14:30:00"
-            },
-            arrival: {
-              iataCode: "DOH",
-              terminal: "1",
-              at: "2024-06-16T05:15:00"
-            },
-            carrierCode: "QR",
-            number: "702",
-            aircraft: {
-              code: "B777"
-            },
-            duration: "PT12H45M",
-            numberOfStops: 0
-          },
-          {
-            departure: {
-              iataCode: "DOH",
-              terminal: "1",
-              at: "2024-06-16T07:30:00"
-            },
-            arrival: {
-              iataCode: "CMB",
-              terminal: "1",
-              at: "2024-06-16T14:15:00"
-            },
-            carrierCode: "QR",
-            number: "658",
-            aircraft: {
-              code: "A321"
-            },
-            duration: "PT3H15M",
-            numberOfStops: 0
-          }
-        ]
-      }
-    ],
-    price: {
-      currency: "USD",
-      total: "980.00",
-      base: "850.00",
-      grandTotal: "980.00"
-    },
-    validatingAirlineCodes: ["QR"],
-    travelerPricings: [
-      {
-        travelerId: "1",
-        travelerType: "ADULT",
-        price: {
-          currency: "USD",
-          total: "980.00",
-          base: "850.00",
-          grandTotal: "980.00"
-        },
-        fareDetailsBySegment: [
-          {
-            segmentId: "1",
-            cabin: "ECONOMY",
-            class: "Y"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: "3",
-    type: "flight-offer",
-    source: "GDS",
-    instantTicketingRequired: false,
-    oneWay: true,
-    isUpsellOffer: false,
-    numberOfBookableSeats: 7,
-    itineraries: [
-      {
-        duration: "PT18H20M",
-        segments: [
-          {
-            departure: {
-              iataCode: "JFK",
-              terminal: "4",
-              at: "2024-06-15T22:15:00"
-            },
-            arrival: {
-              iataCode: "DXB",
-              terminal: "3",
-              at: "2024-06-16T18:45:00"
-            },
-            carrierCode: "EK",
-            number: "204",
-            aircraft: {
-              code: "A380"
-            },
-            duration: "PT12H30M",
-            numberOfStops: 0
-          },
-          {
-            departure: {
-              iataCode: "DXB",
-              terminal: "3",
-              at: "2024-06-16T21:30:00"
-            },
-            arrival: {
-              iataCode: "CMB",
-              terminal: "1",
-              at: "2024-06-17T02:35:00"
-            },
-            carrierCode: "EK",
-            number: "649",
-            aircraft: {
-              code: "B777"
-            },
-            duration: "PT4H35M",
-            numberOfStops: 0
-          }
-        ]
-      }
-    ],
-    price: {
-      currency: "USD",
-      total: "1350.00",
-      base: "1200.00",
-      grandTotal: "1350.00"
-    },
-    validatingAirlineCodes: ["EK"],
-    travelerPricings: [
-      {
-        travelerId: "1",
-        travelerType: "ADULT",
-        price: {
-          currency: "USD",
-          total: "1350.00",
-          base: "1200.00",
-          grandTotal: "1350.00"
-        },
-        fareDetailsBySegment: [
-          {
-            segmentId: "1",
-            cabin: "BUSINESS",
-            class: "J"
-          }
-        ]
-      }
-    ]
-  }
-];
+import { searchFlights } from '../services/flightService';
 
 const FlightSearchForm = ({ onSearch, initialData }) => {
   // Initialize with initialData if provided (for returning from results)
+  // Updated to match backend FlightSearchRequest class
   const [formData, setFormData] = useState(initialData || {
     originLocationCode: '',
     destinationLocationCode: '',
     departureDate: '',
+    returnDate: null,
     adults: 1,
+    children: 0,
+    infants: 0,
+    currencyCode: 'USD',
+    maxResults: 5,
     travelClass: 'ECONOMY',
-    nonStop: false,
-    maxResults: 5
+    nonStop: false
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [flightResults, setFlightResults] = useState([]);
+  const [error, setError] = useState(null);
 
   const travelClasses = [
     { value: 'ECONOMY', label: 'Economy' },
     { value: 'PREMIUM_ECONOMY', label: 'Premium Economy' },
     { value: 'BUSINESS', label: 'Business' },
     { value: 'FIRST', label: 'First Class' }
+  ];
+
+  const currencies = [
+    { value: 'USD', label: 'USD - US Dollar' },
+    { value: 'EUR', label: 'EUR - Euro' },
+    { value: 'GBP', label: 'GBP - British Pound' },
+    { value: 'LKR', label: 'LKR - Sri Lankan Rupee' },
+    { value: 'AED', label: 'AED - UAE Dirham' },
+    { value: 'QAR', label: 'QAR - Qatari Riyal' }
   ];
 
   const handleInputChange = (e) => {
@@ -261,33 +52,41 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Create the request payload matching the backend FlightSearchRequest class
+      const searchRequest = {
+        originLocationCode: formData.originLocationCode.trim(),
+        destinationLocationCode: formData.destinationLocationCode.trim(),
+        departureDate: formData.departureDate,
+        returnDate: formData.returnDate || null,
+        adults: parseInt(formData.adults),
+        children: parseInt(formData.children) || 0,
+        infants: parseInt(formData.infants) || 0,
+        currencyCode: formData.currencyCode,
+        maxResults: parseInt(formData.maxResults),
+        travelClass: formData.travelClass,
+        nonStop: formData.nonStop
+      };
+
+      console.log('Sending search request:', searchRequest);
       
-      // Filter mock data based on search criteria
-      let filteredResults = mockFlightData;
+      // Call the flight search API
+      const results = await searchFlights(searchRequest);
       
-      // Apply non-stop filter if selected
-      if (formData.nonStop) {
-        filteredResults = filteredResults.filter(flight => 
-          flight.itineraries[0].segments.length === 1
-        );
-      }
+      console.log('Search results:', results);
       
-      // Apply max results limit
-      filteredResults = filteredResults.slice(0, parseInt(formData.maxResults));
-      
-      setFlightResults(filteredResults);
+      setFlightResults(results);
       setShowResults(true);
       
       // Call parent callback if provided
       if (onSearch) {
-        onSearch(filteredResults, formData);
+        onSearch(results, formData);
       }
     } catch (error) {
       console.error('Search failed:', error);
+      setError(error.message || 'Failed to search flights. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -295,7 +94,8 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
 
   const handleFlightSelect = (flight) => {
     console.log('Selected flight:', flight);
-    alert(`Flight ${flight.itineraries[0].segments[0].carrierCode}${flight.itineraries[0].segments[0].number} selected for $${flight.price.total}`);
+    // Handle flight selection - you might want to navigate to booking page
+    alert(`Flight selected! Next step: proceed to booking.`);
   };
 
   const handleModifySearch = () => {
@@ -371,7 +171,7 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
                 </div>
               </div>
 
-              {/* Departure Date and Class */}
+              {/* Departure Date and Return Date */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-white text-sm font-medium mb-2">Departure Date</label>
@@ -390,6 +190,24 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
                 </div>
 
                 <div>
+                  <label className="block text-white text-sm font-medium mb-2">Return Date (Optional)</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="date"
+                      name="returnDate"
+                      value={formData.returnDate || ''}
+                      onChange={handleInputChange}
+                      min={formData.departureDate || today}
+                      className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Travel Class and Currency */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                   <label className="block text-white text-sm font-medium mb-2">Class</label>
                   <select
                     name="travelClass"
@@ -404,10 +222,26 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
                     ))}
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">Currency</label>
+                  <select
+                    name="currencyCode"
+                    value={formData.currencyCode}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all appearance-none cursor-pointer"
+                  >
+                    {currencies.map(currency => (
+                      <option key={currency.value} value={currency.value} className="bg-slate-700">
+                        {currency.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Passengers and Advanced Options */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                 <div>
                   <label className="block text-white text-sm font-medium mb-2">Adults</label>
                   <div className="relative">
@@ -421,6 +255,38 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
                       max="9"
                       className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                       required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">Children (2-11)</label>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="number"
+                      name="children"
+                      value={formData.children}
+                      onChange={handleInputChange}
+                      min="0"
+                      max="9"
+                      className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">Infants (0-2)</label>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="number"
+                      name="infants"
+                      value={formData.infants}
+                      onChange={handleInputChange}
+                      min="0"
+                      max="9"
+                      className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -452,6 +318,22 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
                 </div>
               </div>
 
+              {/* Error Display */}
+              {error && (
+                <div className="bg-red-900/50 border border-red-700 rounded-xl p-4">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-300">{error}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Search Button */}
               <div className="pt-6">
                 <button
@@ -475,14 +357,6 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
                 </button>
               </div>
             </form>
-          </div>
-
-          {/* Debug Info */}
-          <div className="mt-8 bg-slate-800/30 backdrop-blur-sm rounded-xl border border-slate-700/30 p-6">
-            <h3 className="text-white font-semibold mb-3">Current Form Data (for debugging):</h3>
-            <pre className="text-slate-300 text-sm overflow-x-auto">
-              {JSON.stringify(formData, null, 2)}
-            </pre>
           </div>
         </div>
       </div>
