@@ -35,7 +35,11 @@ const FlightResults = ({ flights = [], searchData = null, loading = false, onFli
           'EK': 'Emirates',
           'AA': 'American Airlines',
           'DL': 'Delta Air Lines',
-          'UA': 'United Airlines'
+          'UA': 'United Airlines',
+          'VS': 'Virgin Atlantic',
+          'A1': 'A.P.G. Distribution System',
+          'Z0': 'Norse Atlantic UK',
+          'GP': 'GetJet Airlines'
         };
         return airlines[carrierCode] || carrierCode;
       };
@@ -48,7 +52,8 @@ const FlightResults = ({ flights = [], searchData = null, loading = false, onFli
           'DOH': 'Doha',
           'DXB': 'Dubai',
           'LAX': 'Los Angeles',
-          'LHR': 'London'
+          'LHR': 'London',
+          'LGW': 'London Gatwick'
         };
         return cities[iataCode] || iataCode;
       };

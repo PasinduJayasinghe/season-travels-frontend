@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plane, Clock, MapPin, CreditCard, AlertTriangle, CheckCircle } from 'lucide-react';
 import { getFlightPricing } from '../../services/flightPricingService';
+import { FlightBookingForm } from '../FlightBookingForm';
+import { BookingSuccessModal } from '../BookingSuccessModal';
 
 const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
   const [pricingData, setPricingData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [warnings, setWarnings] = useState([]);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [bookingResult, setBookingResult] = useState(null);
 
   useEffect(() => {
     if (isOpen && flight) {
@@ -90,9 +95,32 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
   };
 
   const handleConfirm = () => {
-    if (pricingData && onConfirm) {
-      onConfirm(pricingData);
+    if (pricingData) {
+      setShowBookingForm(true);
     }
+  };
+
+  const handleBookingComplete = (result) => {
+    setShowBookingForm(false);
+    
+    if (result.success) {
+      // Show success modal with booking details
+      setBookingResult(result.orderData);
+      setShowSuccessModal(true);
+    } else {
+      // Show error
+      alert(`Booking failed: ${result.message}`);
+    }
+  };
+
+  const handleBookingClose = () => {
+    setShowBookingForm(false);
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    setBookingResult(null);
+    onClose(); // Close the pricing modal as well
   };
 
   if (!isOpen) return null;
@@ -294,6 +322,21 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
           </div>
         )}
       </div>
+
+      {/* Flight Booking Form */}
+      <FlightBookingForm
+        pricedFlightOffer={pricingData}
+        isOpen={showBookingForm}
+        onClose={handleBookingClose}
+        onBookingComplete={handleBookingComplete}
+      />
+
+      {/* Booking Success Modal */}
+      <BookingSuccessModal
+        isOpen={showSuccessModal}
+        bookingData={bookingResult}
+        onClose={handleSuccessClose}
+      />
     </div>
   );
 };

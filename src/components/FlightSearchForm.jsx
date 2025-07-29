@@ -73,16 +73,19 @@ const FlightSearchForm = ({ onSearch, initialData }) => {
       console.log('Sending search request:', searchRequest);
       
       // Call the flight search API
-      const results = await searchFlights(searchRequest);
+      const response = await searchFlights(searchRequest);
       
-      console.log('Search results:', results);
+      console.log('Search response:', response);
       
-      setFlightResults(results);
+      // Extract the flights data from the response
+      const flightsData = response.data || response;
+      
+      setFlightResults(flightsData);
       setShowResults(true);
       
       // Call parent callback if provided
       if (onSearch) {
-        onSearch(results, formData);
+        onSearch(flightsData, formData);
       }
     } catch (error) {
       console.error('Search failed:', error);

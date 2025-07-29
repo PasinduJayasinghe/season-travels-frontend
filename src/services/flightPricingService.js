@@ -1,11 +1,21 @@
 // src/services/flightPricingService.js
+import { prepareFlightOfferForPricing, logFlightOfferStructure } from './flightDataUtils.js';
+
 const API_BASE_URL = 'https://localhost:7136/api/PriceOffer';
 
 export const getFlightPricing = async (flightOffer) => {
   try {
-    // Based on your backend controller, it expects the flight offer data directly
-    // as FlightOffersPriceQuery which should be the flight offer itself
-    const pricingRequest = flightOffer;
+    // Send the complete flight offer object directly to backend
+    // Backend will wrap it in the Amadeus format
+    console.log('Original flight offer:', JSON.stringify(flightOffer, null, 2));
+    
+    // Validate and transform the flight offer for Amadeus compatibility
+    const preparedFlightOffer = prepareFlightOfferForPricing(flightOffer);
+    
+    // Log the prepared structure for debugging
+    logFlightOfferStructure(preparedFlightOffer, 'Prepared Flight Offer');
+    
+    const pricingRequest = preparedFlightOffer;
 
     console.log('Sending pricing request to:', API_BASE_URL);
     console.log('Request payload:', JSON.stringify(pricingRequest, null, 2));
