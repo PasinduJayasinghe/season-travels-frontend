@@ -3,6 +3,7 @@ import { X, Plane, Clock, MapPin, CreditCard, AlertTriangle, CheckCircle } from 
 import { getFlightPricing } from '../../services/flightPricingService';
 import { FlightBookingForm } from '../FlightBookingForm';
 import { BookingSuccessModal } from '../BookingSuccessModal';
+import Portal from '../Portal';
 
 const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
   const [pricingData, setPricingData] = useState(null);
@@ -126,10 +127,19 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <Portal>
+      <div 
+        className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 bg-opacity-95 flex items-center justify-center p-4" 
+        style={{ 
+          zIndex: 2147483647,
+          position: 'fixed',
+          isolation: 'isolate',
+          transform: 'translateZ(0)'
+        }}
+      >
+      <div className="bg-slate-800 rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col" style={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+        <div className="flex items-center justify-between p-6 border-b border-slate-700 flex-shrink-0">
           <h2 className="text-2xl font-bold text-white">Flight Pricing Details</h2>
           <button
             onClick={onClose}
@@ -139,8 +149,8 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-6">
           {isLoading && (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
@@ -304,9 +314,9 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer - Always visible */}
         {pricingData && (
-          <div className="flex items-center justify-end space-x-4 p-6 border-t border-slate-700">
+          <div className="flex items-center justify-end space-x-4 p-6 border-t border-slate-700 flex-shrink-0">
             <button
               onClick={onClose}
               className="px-6 py-3 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-colors"
@@ -337,7 +347,8 @@ const FlightPricingModal = ({ flight, isOpen, onClose, onConfirm }) => {
         bookingData={bookingResult}
         onClose={handleSuccessClose}
       />
-    </div>
+      </div>
+    </Portal>
   );
 };
 

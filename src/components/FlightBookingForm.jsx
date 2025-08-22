@@ -491,7 +491,13 @@ const FlightBookingForm = ({ pricedFlightOffer, isOpen, onClose, onBookingComple
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div 
+      className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 bg-opacity-95 flex items-center justify-center p-4" 
+      style={{ 
+        zIndex: 2147483646,
+        position: 'fixed'
+      }}
+    >
       <div className="bg-slate-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-slate-800 border-b border-slate-700 p-6 flex justify-between items-center">
