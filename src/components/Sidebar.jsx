@@ -1,8 +1,10 @@
 // src/components/Sidebar.jsx
 import React from 'react';
-import { Plane, Calendar, Users } from 'lucide-react';
+import { Plane, Calendar, Users, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ activeSection, onSectionChange }) => {
+  const { logout, user } = useAuth();
   const menuItems = [
     {
       id: 'book-flight',
@@ -24,8 +26,14 @@ const Sidebar = ({ activeSection, onSectionChange }) => {
     }
   ];
 
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+    }
+  };
+
   return (
-    <div className="w-64 bg-slate-900 min-h-screen border-r border-slate-700">
+    <div className="w-64 bg-slate-900 min-h-screen border-r border-slate-700 flex flex-col">
       {/* Logo/Header */}
       <div className="p-6 border-b border-slate-700">
         <h1 className="text-xl font-bold text-white">Season Travels</h1>
@@ -33,7 +41,7 @@ const Sidebar = ({ activeSection, onSectionChange }) => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="p-4">
+      <nav className="p-4 flex-1">
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -60,6 +68,21 @@ const Sidebar = ({ activeSection, onSectionChange }) => {
           })}
         </ul>
       </nav>
+
+      {/* User Info & Logout */}
+      <div className="p-4 border-t border-slate-700">
+        <div className="mb-3">
+          <p className="text-slate-400 text-xs">Logged in as</p>
+          <p className="text-white text-sm font-medium truncate">{user?.email}</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center px-4 py-3 rounded-lg text-slate-300 hover:bg-red-600 hover:text-white transition-colors"
+        >
+          <LogOut className="w-5 h-5 mr-3" />
+          <span className="font-medium">Logout</span>
+        </button>
+      </div>
     </div>
   );
 };
