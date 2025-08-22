@@ -1,5 +1,5 @@
 // src/services/flightOrderService.js
-const API_BASE_URL = 'https://localhost:7136/api/FlightOrder';
+const API_BASE_URL = 'https://localhost:7136/api/FlightCreateOrders';
 
 export const createFlightOrder = async (orderData) => {
   try {
