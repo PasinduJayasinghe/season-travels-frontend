@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import FlightSearchForm from './FlightSearchForm';
 import FlightResults from './FlightResults';
 import Settings from './Settings';
+import Chatbot from './Chatbot';
 
 const Dashboard = () => {
   // Dashboard navigation state
@@ -126,6 +127,9 @@ const Dashboard = () => {
       <div className="flex-1 overflow-auto">
         {renderMainContent()}
       </div>
+
+      {/* Chatbot */}
+      <Chatbot onNavigate={handleSectionChange} />
     </div>
   );
 };
