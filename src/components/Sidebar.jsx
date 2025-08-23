@@ -1,6 +1,6 @@
 // src/components/Sidebar.jsx
 import React from 'react';
-import { Plane, Calendar, Users, LogOut } from 'lucide-react';
+import { Plane, Calendar, Users, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ activeSection, onSectionChange }) => {
@@ -23,6 +23,12 @@ const Sidebar = ({ activeSection, onSectionChange }) => {
       label: 'Customers',
       icon: Users,
       description: 'Manage customers'
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      description: 'Manage settings & users'
     }
   ];
 

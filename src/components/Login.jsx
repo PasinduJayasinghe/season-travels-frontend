@@ -29,16 +29,16 @@ const Login = ({ onLogin }) => {
 
     // Simulate API call delay
     setTimeout(() => {
-      // Check credentials
-      if (formData.email === 'test@gmail.com' && formData.password === 'admin') {
-        // Successful login
+      try {
+        // Attempt login
         onLogin({
           email: formData.email,
+          password: formData.password,
           rememberMe: formData.rememberMe
         });
-      } else {
-        // Failed login
-        setError('Invalid email or password. Please try again.');
+      } catch (err) {
+        // Handle login errors
+        setError(err.message || 'Invalid email or password. Please try again.');
       }
       setIsLoading(false);
     }, 1000);

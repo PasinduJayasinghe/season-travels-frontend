@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import FlightSearchForm from './FlightSearchForm';
 import FlightResults from './FlightResults';
+import Settings from './Settings';
 
 const Dashboard = () => {
   // Dashboard navigation state
@@ -99,6 +100,9 @@ const Dashboard = () => {
             </div>
           </div>
         );
+      
+      case 'settings':
+        return <Settings />;
       
       default:
         return (

@@ -46,8 +46,45 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
+    // Check against stored users
+    const savedUsers = localStorage.getItem('seasonTravels_users');
+    let users = [];
+    
+    if (savedUsers) {
+      users = JSON.parse(savedUsers);
+    } else {
+      // Initialize with default admin user if no users exist
+      users = [
+        {
+          id: '1',
+          fullName: 'Test Admin',
+          email: 'test@gmail.com',
+          role: 'admin',
+          createdAt: new Date().toISOString(),
+          status: 'active'
+        }
+      ];
+      localStorage.setItem('seasonTravels_users', JSON.stringify(users));
+    }
+
+    // Find user with matching email
+    const foundUser = users.find(user => user.email.toLowerCase() === userData.email.toLowerCase());
+    
+    if (!foundUser) {
+      throw new Error('User not found');
+    }
+
+    // For now, we'll accept the hardcoded password 'admin' for all users
+    // In a real app, you'd verify the hashed password
+    if (userData.password !== 'admin') {
+      throw new Error('Invalid password');
+    }
+
     const user = {
-      email: userData.email,
+      id: foundUser.id,
+      email: foundUser.email,
+      fullName: foundUser.fullName,
+      role: foundUser.role,
       loginTime: new Date().toISOString()
     };
 
